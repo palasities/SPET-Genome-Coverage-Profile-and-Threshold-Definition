@@ -71,6 +71,20 @@ awk '$4>10 {print $1,$2,$3}' OFS="\t" 118-If-Qi123-P2QiIF-F03.q20_properlyPaired
 | bedtools merge \
 | wc -l > n.regions_10X_bedtools.txt  ##for 10X
 ```
--  1X Depth: 33868
--  5X Depth: 21602
-- 10X Depth: 13136
+-  >1X Depth: 33868
+-  >5X Depth: 21602
+- >10X Depth: 13136
+
+For each depth threshold (>1×, >5×, >10×), genomic regions were defined as continuous intervals where coverage met or exceeded the threshold. Adjacent bases meeting the criterion were merged into single regions (See the -d parameter for merging nearby continuous regions)
+
+```bash
+for T in 1 5 10; do   awk -v T=$T '$4>T {print $1,$2,$3}' OFS="\t" ../118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.bedgraph   | bedtools merge -i -   > regions_ge${T}x.bed;    n=$(wc -l < regions_ge${T}x.bed);   bp=$(awk '{sum+=($3-$2)} END{print sum}' regions_ge${T}x.bed);    mean=$(awk '{sum+=($3-$2); n++} END{print sum/n}' regions_ge${T}x.bed)
+printf ">%dx\tregions: %d\tbases: %d\tmean_len: %.1f\n" "$T" "$n" "$bp" "$mean"; done
+```
+
+- >1x     regions: 33868  bases: 6107706  mean_len: 180.3
+- >5x     regions: 21602  bases: 2357203  mean_len: 109.1
+- >10x    regions: 13136  bases: 1202682  mean_len: 91.6
+
+
+
