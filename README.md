@@ -22,9 +22,9 @@ Read Count Statistics
 ```bash
 samtools view -c
 ```
-118-If-Qi123-P2QiIF-F03.q10.bam   					        419879
-118-If-Qi123-P2QiIF-F03.q20_NO_unmapped_sec_suppl.bam		417611
-118-If-Qi123-P2QiIF-F03.q20_properlyPaired.bam			    415601
+- 118-If-Qi123-P2QiIF-F03.q10.bam   					        419879
+- 118-If-Qi123-P2QiIF-F03.q20_NO_unmapped_sec_suppl.bam		    417611
+- 118-If-Qi123-P2QiIF-F03.q20_properlyPaired.bam			    415601
 
 2. Genome Coverage Calculation
 
@@ -60,6 +60,6 @@ awk '$4>=1{cov+=($3-$2)} END{print cov}' 118-If-Qi123-P2QiIF-F03.q20_properlyPai
 
 Based on the total genome size, the percentages of captured regions are:
 
-10X Depth:  0.16%
-5X Depth:   0.35%
-1X Depth:   1.09%
+- 10X Depth:  0.16%
+- 5X Depth:   0.35%
+- 1X Depth:   1.09%
