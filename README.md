@@ -43,7 +43,7 @@ bedtools genomecov -ibam ../118-If-Qi123-P2QiIF-F03.q20_properlyPaired.bam -bga 
 
 Note: When providing a BAM file as input, bedtools extracts chromosome sizes directly from the BAM header. Using the -g flag alongside a BAM might trigger a warning as the tool prioritizes the header info.
 
-3. Breadth of Coverage at Different Thresholds
+3. Breadth of Coverage at Different Thresholds and Number of Regions
 
 We calculated the total number of base pairs (bp) covered at >=1X, >=5X, and >=10X depth. A 10X threshold is generally considered adequate for reliable variant calling.
 
@@ -60,6 +60,17 @@ awk '$4>=1{cov+=($3-$2)} END{print cov}' 118-If-Qi123-P2QiIF-F03.q20_properlyPai
 
 Based on the total genome size, the percentages of captured regions are:
 
-- 10X Depth:  0.16%
-- 5X Depth:   0.35%
-- 1X Depth:   1.09%
+-  1X Depth:   1.09%
+-  5X Depth:   0.35%
+- 10X Depth:   0.16%
+
+Number of genomic regions captured at different coverage thresholds
+
+```bash
+awk '$4>10 {print $1,$2,$3}' OFS="\t" 118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.bedgraph \
+| bedtools merge \
+| wc -l > n.regions_10X_bedtools.txt  ##for 10X
+```
+-  1X Depth: 33868
+-  5X Depth: 21602
+- 10X Depth: 13136
