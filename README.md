@@ -82,6 +82,63 @@ for T in 1 5 10; do   awk -v T=$T '$4>T {print $1,$2,$3}' OFS="\t" ../118-If-Qi1
 printf ">%dx\tregions: %d\tbases: %d\tmean_len: %.1f\n" "$T" "$n" "$bp" "$mean"; done
 ```
 
+Last command, define T (coverage threshold) and D (-d parameter maximum gap between regions):
+
+```
+IN="118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.bedgraph"
+OUTDIR="bed_files/with_gaps_fusion/beds_cov"
+mkdir -p "$OUTDIR"
+
+for T in 1 5 10 15 20; do         ## umbrales de cobertura
+  for D in 10 20 50; do    ## gaps máximos para fusionar
+
+    out="$OUTDIR/$(basename "${IN%.bedgraph}").gt${T}.merge_d${D}.bed"
+
+    awk -v T="$T" '$4 > T {print $1, $2, $3}' OFS="\t" "$IN" \
+      | LC_ALL=C sort -k1,1 -k2,2n \
+      | bedtools merge -i - -d "$D" \
+      > "$out"
+
+    n=$(wc -l < "$out")
+
+    # bases totales
+    bp=$(awk '{sum+=($3-$2)} END{print sum+0}' "$out")
+
+    if [ "$n" -gt 0 ]; then
+      read mean min max < <(
+        awk '
+          {len=$3-$2; sum+=len}
+          NR==1 {min=len; max=len}
+          {if (len<min) min=len; if (len>max) max=len}
+          END {print sum/NR, min, max}
+        ' "$out"
+      )
+    else
+      mean=0; min=0; max=0
+    fi
+
+    printf ">%dx (merge_d=%d)\tregions: %d\tbases: %d\tmean_len: %.1f\tmin_len: %d\tmax_len: %d\tbed: %s\n" \
+      "$T" "$D" "$n" "$bp" "$mean" "$min" "$max" "$out"
+
+  done
+done
+```
+
+Something like:
+
+- >1x (merge_d=10)        regions: 29678  bases: 6122727  mean_len: 206.3 min_len: 1      max_len: 1377   bed: bed_files/with_gaps_fusion/beds_cov/118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.gt1.merge_d10.bed
+- >1x (merge_d=20)        regions: 28215  bases: 6144966  mean_len: 217.8 min_len: 1      max_len: 1377   bed: bed_files/with_gaps_fusion/beds_cov/118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.gt1.merge_d20.bed
+
+......
+......
+......
+
+- >20x (merge_d=50)       regions: 5250   bases: 508886   mean_len: 96.9  min_len: 1      max_len: 1081   bed: bed_files/with_gaps_fusion/beds_cov/118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.gt20.merge_d50.bed
+
+
+
+
+
 - >1x     regions: 33868  bases: 6107706  mean_len: 180.3
 - >5x     regions: 21602  bases: 2357203  mean_len: 109.1
 - >10x    regions: 13136  bases: 1202682  mean_len: 91.6
