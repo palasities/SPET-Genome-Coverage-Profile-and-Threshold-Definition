@@ -81,6 +81,10 @@ For each depth threshold (>1×, >5×, >10×), genomic regions were defined as co
 for T in 1 5 10; do   awk -v T=$T '$4>T {print $1,$2,$3}' OFS="\t" ../118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.bedgraph   | bedtools merge -i -   > regions_ge${T}x.bed;    n=$(wc -l < regions_ge${T}x.bed);   bp=$(awk '{sum+=($3-$2)} END{print sum}' regions_ge${T}x.bed);    mean=$(awk '{sum+=($3-$2); n++} END{print sum/n}' regions_ge${T}x.bed)
 printf ">%dx\tregions: %d\tbases: %d\tmean_len: %.1f\n" "$T" "$n" "$bp" "$mean"; done
 ```
+- >1x     regions: 33868  bases: 6107706  mean_len: 180.3
+- >5x     regions: 21602  bases: 2357203  mean_len: 109.1
+- >10x    regions: 13136  bases: 1202682  mean_len: 91.6
+
 
 Last command, define T (coverage threshold) and D (-d parameter maximum gap between regions):
 
@@ -134,14 +138,6 @@ Something like:
 ......
 
 - >20x (merge_d=50)       regions: 5250   bases: 508886   mean_len: 96.9  min_len: 1      max_len: 1081   bed: bed_files/with_gaps_fusion/beds_cov/118-If-Qi123-P2QiIF-F03.q20_properlyPaired_cov.gt20.merge_d50.bed
-
-
-
-
-
-- >1x     regions: 33868  bases: 6107706  mean_len: 180.3
-- >5x     regions: 21602  bases: 2357203  mean_len: 109.1
-- >10x    regions: 13136  bases: 1202682  mean_len: 91.6
 
 
 
